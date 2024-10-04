@@ -1,18 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import psycopg2
+from utils.db_connection import DBConnection
 
 # 라우터 생성
 case_router = APIRouter()
 
 # PostgreSQL 연결 정보
-DB_CONFIG = {
-    'dbname': 'here_law',
-    'user': 'here_law_admin',
-    'password': '1234',
-    'host': '3.36.85.129',
-    'port': '5434'
-}
 
 # Pydantic 모델 (응답 데이터 형식 정의)
 class LegalCase(BaseModel):
@@ -32,14 +25,8 @@ class LegalCase(BaseModel):
 
 # 데이터베이스 연결 함수
 def get_db_connection():
-    conn = psycopg2.connect(
-        dbname=DB_CONFIG['dbname'],
-        user=DB_CONFIG['user'],
-        password=DB_CONFIG['password'],
-        host=DB_CONFIG['host'],
-        port=DB_CONFIG['port']
-    )
-    return conn
+    db_instance = DBConnection()
+    return db_instance()
 
 # 판례 일련번호로 데이터를 조회하는 API
 @case_router.get("/cases/{case_info_id}", response_model=LegalCase)
